@@ -1,0 +1,9 @@
+.inline {
+	display: inline-block;
+	width: 200px;
+	text-align: center;
+}
+
+.inline input {
+	width: 100%;
+}
