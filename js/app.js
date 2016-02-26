@@ -9,7 +9,7 @@ angular.module('mrau', ['ngCordova'])
         $scope.uniqueId = 0;
         $scope.totalGames = 0;
         $scope.totalPlayers = 0;
-        $scope.currentPlayer = 0;
+        $scope.dealerIndex = 0;
         $scope.shouldAnnulScore = false;
         $scope.scores = [];
         var _this = $scope;
@@ -55,6 +55,17 @@ angular.module('mrau', ['ngCordova'])
             });
         };
 
+        $scope.getPlayersScores = function(game){
+            var playersScores = [];
+            angular.forEach($scope.players, function(player, key){
+                // If less results than players
+                // e.g. a new player added after few rounds
+                if (typeof game[key] === 'undefined') game[key] = 0;
+                playersScores.push(game[key]);
+            });
+            return playersScores;
+        };
+
         $scope.inputActive = [];
         /**
          * Update the result preview
@@ -67,7 +78,7 @@ angular.module('mrau', ['ngCordova'])
             //return true;
             $scope.inputActive[index] = true;
             var player = $scope.players[index];
-            var score = ($scope.scores[index].value) ? $scope.scores[index].value : 0;
+            var score = ($scope.scores[index]) ? $scope.scores[index] : 0;
             score = parseInt(score);
             player.previewScore = player.totalScore + score;
             if ($scope.shouldAnnulScore && $scope.annulScore(player.previewScore)) {
@@ -84,18 +95,16 @@ angular.module('mrau', ['ngCordova'])
             angular.forEach($scope.players, function(player, key) {
                 // Set default score value
                 if (typeof _this.scores[key] === 'undefined') {
-                    _this.scores[key] = {
-                        'value': 0
-                    };
+                    _this.scores[key] = 0;
                 }
                 var playerScore = _this.scores[key];
                 // Normalize score value
-                if (playerScore.value == "") playerScore.value = 0;
-                playerScore.value = parseInt(playerScore.value);
+                if (playerScore == "") playerScore = 0;
+                playerScore = parseInt(playerScore);
                 // Set score player id
-                playerScore.playerId = player.id;
+                //playerScore.playerId = player.id;
                 // Increment player total score
-                player.totalScore = player.totalScore + playerScore.value;
+                player.totalScore = player.totalScore + playerScore;
                 if (_this.shouldAnnulScore && _this.annulScore(player.totalScore)) {
                     player.totalScore = 0;
                 }
@@ -109,7 +118,13 @@ angular.module('mrau', ['ngCordova'])
             $scope.scores = [];
             // Increment number of games
             $scope.totalGames++;
-            $scope.currentPlayer = $scope.totalGames % $scope.totalPlayers;
+            // Set next dealer index
+            $scope.dealerIndex++;
+            if (typeof $scope.players[$scope.dealerIndex] === 'undefined') {
+                // No next player, move to the first one: players[0]
+                $scope.dealerIndex = 0;
+            }
+            //$scope.dealerIndex = $scope.totalGames % $scope.totalPlayers;
             //console.log($scope.games);
         };
 
@@ -138,6 +153,10 @@ angular.module('mrau', ['ngCordova'])
             $scope.players.push($scope.player);
             $scope.player = {};
             $scope.totalPlayers++;
+            // Retroactively set results
+            angular.forEach($scope.games, function(round, keyG) {
+                _this.games[keyG].push(0);
+            });
         };
 
         /**
@@ -146,18 +165,36 @@ angular.module('mrau', ['ngCordova'])
          */
         $scope.removePlayer = function(id){
             var _this = $scope;
+            // Current dealer id
+            var dealerId = $scope.players[$scope.dealerIndex].id;
+            // Remove player
+            var playerKey = 0;
             angular.forEach($scope.players, function(player, key) {
-                if (player.id == id) _this.players.splice(key, 1);
+                if (player.id == id) {
+                    _this.players.splice(key, 1);
+                    playerKey = key;
+                }
             });
             // Remove player scores
             angular.forEach($scope.games, function(round, keyG) {
-                angular.forEach(round, function(score, keyR) {
+                _this.games[keyG].splice(playerKey, 1);
+                /*angular.forEach(round, function(score, keyR) {
                     if (score.playerId == id) {
                         _this.games[keyG].splice(keyR, 1);
                     }
-                });
+                });*/
             });
+            // Set next dealer index
+            if (dealerId > id ) {
+                // If the dealer comes after the removed player,
+                // change the dealer index
+                $scope.dealerIndex--;
+            }
+            if (typeof $scope.players[$scope.dealerIndex] === 'undefined') {
+                // No next player, move to the first one: players[0]
+                $scope.dealerIndex = 0;
+            }
             $scope.totalPlayers--;
-            $scope.currentPlayer = $scope.totalGames % $scope.totalPlayers;
+            if ($scope.totalPlayers == 0) $scope.resetScore();
         };
     }]);

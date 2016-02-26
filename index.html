@@ -11,6 +11,7 @@
     <title>Angular training</title>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/table.css">
 </head>
 <div id="app" ng-controller="GameController as gameCtrl">
     <nav class="navbar navbar-default navbar-fixed-top">
@@ -46,56 +47,54 @@
         </div><!-- /.container-fluid -->
     </nav>
     <div class="content navbar-padding-top">
-        <table class="table" ng-show="totalPlayers">
-            <thead>
+        <div class="mrau-table" ng-show="totalPlayers">
             <!-- Players -->
-            <tr>
-                <th>#</th>
-                <th ng-repeat="player in players" ng-show="player.name">
-                    <div ng-click="confirmDeletePlayer(player.id)" ng-class="{'active-player':players[currentPlayer].id === player.id}"
+            <div class="mrau-row players-row fixed-players">
+                <div class="cell-compact fixed">
+					<span>#</span>
+				</div>
+                <div class="cell-greedy" ng-repeat="player in players" ng-show="player.name">
+                    <div ng-click="confirmDeletePlayer(player.id)" ng-class="{'active-player':players[dealerIndex].id === player.id}"
                          class="player-name">{{player.name}}
                     </div>
-                </th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
+                </div>
+                <div class="cell-compact fixed"></div>
+            </div>
             <!-- Finished games -->
-            <tr ng-repeat="game in games track by $index">
-                <td class="compact">
+            <div class="mrau-row" ng-repeat="game in games track by $index">
+                <div class="cell-compact fixed">
                     {{$index + 1}}
-                </td>
-                <td ng-repeat="playerScore in game">
-                    {{playerScore.value}}
-                </td>
-                <td></td>
-            </tr>
+                </div>
+                <div class="cell-greedy" ng-repeat="playerScore in game track by $index">
+					<div class="result">{{playerScore}}</div>
+                </div>
+                <div class="cell-compact fixed"></div>
+            </div>
             <!-- Active game -->
-            <tr>
-                <td>{{totalGames + 1}}</td>
-                <td ng-repeat="player in players track by $index" ng-show="player.name">
-                    <input class="form-control" type="number" ng-model="scores[$index].value"
+            <div class="mrau-row">
+                <div class="cell-compact fixed">{{totalGames + 1}}</div>
+                <div class="cell-greedy input-cell" ng-repeat="player in players track by $index" ng-show="player.name">
+                    <input class="form-control" type="number" ng-model="scores[$index]"
                            ng-change="changeResultPreview($index)" required>
-                </td>
-                <td class="compact">
+                </div>
+                <div class="cell-compact fixed" class="compact">
                     <a class="btn btn-success btn-md" ng-click="saveRound()">
                         <span class="glyphicon glyphicon-ok"></span>
                     </a>
-                </td>
-            </tr>
-            </tbody>
-            <tfoot>
+                </div>
+            </div>
             <!-- Results -->
-            <tr>
-                <td>=</td>
-                <td ng-repeat="player in players track by $index" ng-show="player.name" class="result">
-                    <span class="totalScore" ng-hide="inputActive[$index]">{{player.totalScore}}</span>
-                    <span class="preview-score" ng-show="inputActive[$index]">{{ player.previewScore }}</span>
-                </td>
-                <td></td>
-            </tr>
-            </tfoot>
-        </table>
+            <div class="mrau-row">
+                <div class="cell-compact fixed">=</div>
+                <div class="cell-greedy" ng-repeat="player in players track by $index" ng-show="player.name">
+					<div class="totalResult">
+						<span class="totalScore" ng-hide="inputActive[$index]">{{player.totalScore}}</span>
+						<span class="preview-score" ng-show="inputActive[$index]">{{ player.previewScore }}</span>
+					</div>
+                </div>
+                <div class="cell-compact fixed"></div>
+            </div>
+        </div>
     </div>
 </div>
 <script type="text/javascript" src="js/jquery-2.2.1.min.js"></script>

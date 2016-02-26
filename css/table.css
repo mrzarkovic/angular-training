@@ -1,0 +1,32 @@
+.mrau-table .mrau-row {
+	display: table;
+	width: 100%;
+}
+
+.mrau-table .mrau-row div[class^="cell-"] {
+	display: table-cell;
+	vertical-align: middle;
+	white-space: nowrap;
+	text-align: center;
+	position: relative;
+}
+
+.mrau-table .mrau-row.players-row {
+	font-weight: bold;
+	border-bottom: 1px solid #eaeaea;
+	height: 40px;
+}
+
+.mrau-table .mrau-row .cell-compact {
+	width: 1px;
+	white-space: nowrap;
+	padding: 3px;
+}
+
+.mrau-table .mrau-row .cell-compact.fixed {
+	width: 40px;
+}
+
+.mrau-table .mrau-row .cell-greedy {
+	width: auto;
+}

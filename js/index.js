@@ -39,11 +39,13 @@ var app = {
             $('.navbar').removeClass("navbar-fixed-top");
             $('.navbar').addClass("navbar-static-top");
             $('.content').removeClass("navbar-padding-top");
+            $('.players-row').removeClass("fixed-players");
         });
         $('#navbar').on('hidden.bs.collapse', function () {
             $('.navbar').removeClass("navbar-static-top");
             $('.navbar').addClass("navbar-fixed-top");
             $('.content').addClass("navbar-padding-top");
+            $('.players-row').addClass("fixed-players");
         });
         var domElement = document.getElementById("app");
         angular.bootstrap(domElement, ['mrau']);
