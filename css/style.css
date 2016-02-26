@@ -1,9 +1,45 @@
-.inline {
-	display: inline-block;
-	width: 200px;
+body {
+	font-size: 16px;
+}
+.form-control {
+	padding: 5px;
+}
+
+.content {
+	padding: 0 5px;
+}
+
+.navbar {
+	margin-bottom: 0;
+}
+
+.navbar-padding-top {
+	padding-top: 50px;
+}
+
+.table,
+.table th {
 	text-align: center;
 }
 
-.inline input {
-	width: 100%;
+.table tr td.compact {
+	width: 1%;
+}
+
+.active-player {
+	color: #337ab7;
+}
+
+.preview-score {
+	color: #9d9d9d;
+}
+
+header h1 {
+	margin: 0;
+}
+
+.result,
+.player-name {
+	font-size: 140%;
+	text-transform: capitalize;
 }

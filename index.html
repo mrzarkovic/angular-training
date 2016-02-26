@@ -1,39 +1,111 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="training">
+<html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>Angular training</title>
-	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport"
+          content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+    <title>Angular training</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
-<div class="container">
-	<div ng-controller="GameController as gameCtrl">
-		<form ng-submit="gameCtrl.addPlayer()">
-			<input type="text" ng-model="gameCtrl.player.name">
-			<input type="submit" value="Add player">
-		</form>
-		<div>
-			<div class="inline" ng-repeat="player in gameCtrl.players">
-				<div ng-click="gameCtrl.removePlayer(player.id)">{{player.name}}</div>
-			</div>
-		</div>
-		<div ng-repeat="game in gameCtrl.games track by $index">
-			<div class="inline" ng-repeat="playerScore in game">
-				{{playerScore.value}}
-			</div>
-		</div>
-		<div ng-repeat="player in gameCtrl.players track by $index" class="inline">
-			<input type="text" ng-model="gameCtrl.scores[$index].value">
-		</div>
-		<button ng-click="gameCtrl.saveRound()">Save</button>
-		<div>
-			<div class="inline" ng-repeat="player in gameCtrl.players">
-				{{player.totalScore}}
-			</div>
-		</div>
-	</div>
+<div id="app" ng-controller="GameController as gameCtrl">
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                        aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Mrau</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="navbar" aria-expanded="false" style="height: 1px;">
+                <form name="addPlayerForm" ng-submit="addPlayerForm.$valid && addPlayer()"
+                      class="navbar-form navbar-left" novalidate>
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="newPlayer" ng-model="player.name"
+                               placeholder="Ime igrača" required>
+                    </div>
+                    <input type="submit" value="Dodaj igrača" class="btn btn-primary form-control">
+                    <div class="form-group">
+                        <input type="checkbox" id="shouldAnnulScore" ng-model="shouldAnnulScore">
+                        <label for="shouldAnnulScore"> (e.g. 555 = 0, 44 = 0, ...)</label>
+                    </div>
+                </form>
+                <button ng-click="confirmResetTable()" class="btn btn-danger navbar-btn">Nova igra</button>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+    <div class="content navbar-padding-top">
+        <table class="table" ng-show="totalPlayers">
+            <thead>
+            <!-- Players -->
+            <tr>
+                <th>#</th>
+                <th ng-repeat="player in players" ng-show="player.name">
+                    <div ng-click="confirmDeletePlayer(player.id)" ng-class="{'active-player':players[currentPlayer].id === player.id}"
+                         class="player-name">{{player.name}}
+                    </div>
+                </th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Finished games -->
+            <tr ng-repeat="game in games track by $index">
+                <td class="compact">
+                    {{$index + 1}}
+                </td>
+                <td ng-repeat="playerScore in game">
+                    {{playerScore.value}}
+                </td>
+                <td></td>
+            </tr>
+            <!-- Active game -->
+            <tr>
+                <td>{{totalGames + 1}}</td>
+                <td ng-repeat="player in players track by $index" ng-show="player.name">
+                    <input class="form-control" type="number" ng-model="scores[$index].value"
+                           ng-change="changeResultPreview($index)" required>
+                </td>
+                <td class="compact">
+                    <a class="btn btn-success btn-md" ng-click="saveRound()">
+                        <span class="glyphicon glyphicon-ok"></span>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <!-- Results -->
+            <tr>
+                <td>=</td>
+                <td ng-repeat="player in players track by $index" ng-show="player.name" class="result">
+                    <span class="totalScore" ng-hide="inputActive[$index]">{{player.totalScore}}</span>
+                    <span class="preview-score" ng-show="inputActive[$index]">{{ player.previewScore }}</span>
+                </td>
+                <td></td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
 </div>
+<script type="text/javascript" src="js/jquery-2.2.1.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/angular.min.js"></script>
+<script type="text/javascript" src="js/ng-cordova.min.js"></script>
 <script type="text/javascript" src="js/app.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
+<!-- Testing web
+    <script type="text/javascript" src="cordova.js"></script>
+-->
 </body>
 </html>
